@@ -9,10 +9,20 @@
   </head>
   <body>
     {% include 'main/menu.html' %}
-    <h1>歡迎來到我的部落格</h1>
-    <p><a class="btn" href="{% url 'article:articleCreate' %}">新增文章</a></p>
+    <h2>歡迎來到我的部落格</h2>
+    {% include 'main/messages.html' %}
+    <form class="inlineBlock" action="{% url 'article:articleSearch' %}">
+      <input type="text" name="searchTerm">
+      <input class="btn" type="submit" value="查詢">
+    </form>
+    <p class="inlineBlock"><a class="btn" href="{% url 'article:articleCreate' %}">新增文章</a></p>
+    <br><br><hr>
     {% for article, comments in articles.items %}
-      <h3>{{ article.title }}</h3>
+      <h3 class="inlineBlock"><a href="{% url 'article:articleRead' article.id %}">{{ article.title }}</a></h3>
+  <form class="inlineBlock" method="post" action="{% url 'article:articleDelete' article.id %}">
+    {% csrf_token %}
+    <input class="btn deleteConfirm" type="submit" value="刪除">
+  </form>
       <p>發表時間：{{ article.pubDateTime|date:'Y-m-d H:i' }}</p>
       <div class="articleContent">{{ article.content|linebreaks|truncatechars_html:30 }}</div>
       {% for comment in comments %}
@@ -23,5 +33,7 @@
         </div>
       {% endfor %}
     {% endfor %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src={% static 'main/js/deleteConfirm.js' %}></script>
   </body>
 </html>
